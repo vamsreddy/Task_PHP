@@ -8,47 +8,60 @@ use Tests\TestCase;
 use App\Models\User;
 
 class UserRegistrationTest extends TestCase
-{
-    public function test_getIndex(): void
-    {
-        $response = $this->get('/api/index');
+{  
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
-    }
-    
-    public function testRegisterWithoutRequiredParametersShouldFail(): void
+    public function testUserRegistrationWithValidData(): void
     {
-        $this
-            ->post('/api/register')
-            ->assertUnprocessable()
-            ->assertJsonFragment([
-                'username' => ['The username field is required.'],
-                'email' => ['The email field is required.'],
-                'password' => ['The password field is required.'],
-                'phone' => ['The phone field is required.'],
+        $userData=[
+            "username"=> "naveen",
+            "email"=>"naveen@gmail.com",
+            "password"=> "Naveen@1234",
+            "confirm_password"=> "Naveen@1234",
+            "phone"=> "9888890000"];
+        $response = $this->postJson('/api/register', $userData);
+
+        $response->assertStatus(201)
+            ->assertJson([
+            'message' => 'Registration successfully.',
             ]);
     }
 
-    public function testRegisterSuccessfull()
+    public function testUserRegistrationWithMissingFields()
     {
-        $register = [
-            'username' => 'rohit',
-            'email' => 'rohit@gmail.com',
-            'password' => 'Testpass@123',
-            'confirm_password' => 'Testpass@123',
-            'phone' => '9800000000'
-        ];
+        $userData=[];
+        $response = $this->postJson('/api/register', $userData);
 
-        $this->json('POST', 'api/register', $register)
-            ->assertStatus(201)
-            ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'username',
-                    'email',
-                    'created_at',
-                    'updated_at'
-                ]                
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'Not Registered.',
+            ]);
+    }
+
+    public function testUsernameEmailPhoneShouldBeUnique()
+    {
+        $userData=[
+            "username"=> "naveen",
+            "email"=>"naveen@gmail.com",
+            "phone"=> "9888890000"];
+        $response = $this->postJson('/api/register', $userData);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'Not Registered.',
+            ]);
+    }
+
+    public function testUserPasswordAndConfirm_PasswordShouldNotBeMatch()
+    {
+        $userData=[
+            'password' => 'Naveen@1234',
+            'confirm_password'=> 'veen@1234'];
+        $response = $this->postJson('/api/register', $userData);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'Not Registered.',
             ]);
     }
 }

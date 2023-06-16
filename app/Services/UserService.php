@@ -31,7 +31,6 @@ class UserService
     {
         $rules = [
             'username' => ['required','min:3','max:20','unique:users'],
-            'email' => ['required','email','unique:users'],
             'phone' => ['required','unique:users','regex:/^[0-9]{10}$/']
         ];
 

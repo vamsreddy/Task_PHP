@@ -7192,7 +7192,6 @@ return array(
     'Tests\\CreatesApplication' => $baseDir . '/tests/CreatesApplication.php',
     'Tests\\Feature\\ExampleTest' => $baseDir . '/tests/Feature/ExampleTest.php',
     'Tests\\Feature\\UserLoginTest' => $baseDir . '/tests/Feature/UserLoginTest.php',
-    'Tests\\Feature\\UserProfileTest' => $baseDir . '/tests/Feature/UserProfileTest.php',
     'Tests\\Feature\\UserRegistrationTest' => $baseDir . '/tests/Feature/UserRegistrationTest.php',
     'Tests\\TestCase' => $baseDir . '/tests/TestCase.php',
     'Tests\\Unit\\ExampleTest' => $baseDir . '/tests/Unit/ExampleTest.php',

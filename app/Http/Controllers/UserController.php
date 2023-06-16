@@ -75,7 +75,7 @@ class UserController extends UserService
     {
         $user = auth()->user();
 
-        return response()->json([
+        return response()->json([   // getting the user profile details
             'username' => $user->username,
             'email' => $user->email,
             'phone' => $user->phone 
@@ -90,10 +90,9 @@ class UserController extends UserService
 
             if ($validData) {
                 $user->username = $request->username;
-                $user->email = $request->email;
                 $user->phone = $request->phone;
 
-                $user->save();
+                $user->save();     //  updating the user profile details
                 return response()->json([
                             "status" => true,
                             "message" => "user profile updated successfully.",
@@ -119,7 +118,7 @@ class UserController extends UserService
             "errors" => $this->error]);
             }
 
-        $response = Password::sendResetLink($request->only('email'));
+        $response = Password::sendResetLink($request->only('email'));  // sending reset link to registered mail
 
         if ($response) {
                 return response()->json([
@@ -142,7 +141,7 @@ class UserController extends UserService
 
         $response = Password::reset($request->only(
             'email', 'password', 'password_confirmation', 'token'
-        ), function ($user, $password) {
+        ), function ($user, $password) {      //reset the user password using token 
             $user->forceFill([
                 'password' => bcrypt($password),
                 'remember_token' => Str::random(60),
@@ -178,7 +177,7 @@ class UserController extends UserService
             }
        
             if (!Hash::check($request->current_password, $user->password)) {
-                return response()->json([
+                return response()->json([    //changing the password by entering old password
                     "status" => false,
                     "message" => "Current password is incorrect"]);
             }
