@@ -32,14 +32,16 @@ Route::controller(PatientController::class)
     Route::post('/xls', 'excel')->name('excel');
 });
 
-Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'login']);
-Route::get('index', [UserController::class, 'index']);
+Route::prefix('v1')->group(function () {
+    Route::post('register', [UserController::class, 'register']);
+    Route::get('login', [UserController::class, 'login'])->name('login');
+    Route::get('index', [UserController::class, 'index']);
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('profile', [UserController::class, 'getProfile']);
-    Route::put('profile', [UserController::class, 'updateProfile']);
-    Route::put('change', [UserController::class, 'changePassword']);
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('profile', [UserController::class, 'getProfile']);
+        Route::put('update-profile', [UserController::class, 'updateProfile']);
+        Route::put('change', [UserController::class, 'changePassword']);
+    });
     Route::post('password-forgot', [UserController::class, 'forgotPassword']);
-    Route::post('password-reset', [UserController::class, 'resetPassword'])->name('password.reset');
+    Route::post('password-reset', [UserController::class, 'resetPassword'])->name('password.reset');    
 });

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -25,6 +26,51 @@ class UserController extends UserService
         ]);
     }
 
+    /**
+     * Register a new user.
+     *
+     * @OA\Post(
+     *     path="api/v1/register",
+     *     summary="Register a new user",
+     *     tags={"User"},
+     *     operationId="register",
+     *     requestBody={
+     *         "required": true,
+     *         "content": {
+     *             "application/json": {
+     *                 "schema": {
+     *                     "type": "object",
+     *                     "properties": {
+     *                         "username": {
+     *                             "type": "string",
+     *                             "example": "",
+     *                         },
+     *                         "email": {
+     *                             "type": "string",
+     *                             "format": "email",
+     *                             "example": "",
+     *                         },
+     *                         "password": {
+     *                             "type": "string",
+     *                             "example": "",
+     *                         },
+     *                         "confirm_password": {
+     *                             "type": "string",
+     *                             "example": "",
+     *                         },
+     *                         "phone": {
+     *                             "type": "string",
+     *                             "example": "",
+     *                         }
+     *                     }
+     *                 }
+     *             }
+     *         }
+     *     },
+     *     @OA\Response(response="201", description="Registration successful"),
+     *     @OA\Response(response="422", description="Registration failed"),
+     * )
+     */
     public function register(Request $request)
     {
         $validData = $this->registerValidate($request->all());
@@ -58,17 +104,15 @@ class UserController extends UserService
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('token')->accessToken;
-
-            return response()->json([
-                "status" => true,
-                "message" => "logged in successfully.",
-                "token" => $token],200);
-        } else {
-            return response()->json([
-                "status" => false,
-                "message" => "log in failed.",
-                "error" => "Invalid credentials"],422);
-        }
+                return response()->json([
+                    'status' => true,
+                    'message' => 'User Login Successfully.',
+                    'token' => $token],200);
+            } else {
+                return response()->json([
+                    "status" => false,
+                    "message" => "User is Unauthorized",],422);
+                }
     }
 
     public function getProfile()
